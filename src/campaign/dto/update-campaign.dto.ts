@@ -5,11 +5,8 @@ import { CAMPAIGN_STATUS } from 'src/db/entities/campaign.entity';
 import { CreateCampaignDto } from './create-campaign.dto';
 
 export class UpdateCampaignDto extends PartialType(CreateCampaignDto) {
-  @ApiProperty({
-    description: 'The ID of the campaign',
-    required: true,
-  })
-  campaignId: number;
+  @ApiProperty({ description: 'The user ID of the campaign owner' })
+  userId: string;
 
   @ApiProperty({
     enum: CAMPAIGN_STATUS,

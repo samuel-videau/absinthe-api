@@ -1,13 +1,13 @@
-import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Query, ForbiddenException } from '@nestjs/common';
 import { Campaign } from 'src/db/entities/campaign.entity';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
 
 import { CampaignService } from './campaign.service';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
 
-@ApiTags('campaign')
-@Controller('user/:userId/campaign')
+@ApiTags('campaigns')
+@Controller('campaigns')
 export class CampaignController {
   constructor(private readonly campaignService: CampaignService) {}
 
@@ -21,23 +21,21 @@ export class CampaignController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiParam({ name: 'userId', description: 'ID of the user' })
   @ApiBody({ type: CreateCampaignDto })
-  async create(
-    @Body() createCampaignDto: CreateCampaignDto,
-    @Param('userId') userId: string,
-  ): Promise<Campaign> {
-    return this.campaignService.create(userId, createCampaignDto);
+  async create(@Body() createCampaignDto: CreateCampaignDto): Promise<Campaign> {
+    return this.campaignService.create(createCampaignDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all campaigns for a user' })
   @ApiResponse({ status: 200, description: 'Return all campaigns for the user.', type: [Campaign] })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @ApiParam({ name: 'userId', description: 'ID of the user' })
-  async findAll(@Param('userId') userId: string): Promise<Campaign[]> {
+  @ApiQuery({ name: 'userId', description: 'ID of the user' })
+  async findAll(@Query('userId') userId: string): Promise<Campaign[]> {
+    if (!userId) throw new ForbiddenException('You do not have access to this resource.');
     return this.campaignService.findAll(userId);
   }
 
-  @Put()
+  @Patch(':campaignId')
   @ApiOperation({ summary: 'Update a campaign' })
   @ApiResponse({
     status: 200,
@@ -45,7 +43,7 @@ export class CampaignController {
     type: Campaign,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @ApiParam({ name: 'userId', description: 'ID of the user' })
+  @ApiParam({ name: 'campaignId', description: 'ID of the campaign' })
   @ApiBody({ type: UpdateCampaignDto })
   async update(@Body() updateCampaignDto: UpdateCampaignDto): Promise<Campaign> {
     return this.campaignService.update(updateCampaignDto);

@@ -19,12 +19,15 @@ export class KeyTableService {
     private readonly campaignRepository: Repository<Campaign>,
   ) {}
 
-  async createKey(key: Partial<Key>): Promise<Key> {
+  async create(key: Partial<Key>): Promise<Key> {
     return this.keyRepository.save(key);
   }
 
-  async findAll(): Promise<Key[]> {
-    return this.keyRepository.find();
+  async findAll(userId?: string, campaignId?: number): Promise<Key[]> {
+    return this.keyRepository.findBy({
+      user: userId ? { id: userId } : undefined,
+      campaign: campaignId ? { id: campaignId } : undefined,
+    });
   }
 
   async findOne(id: string): Promise<Key | null> {
@@ -33,6 +36,10 @@ export class KeyTableService {
 
   async findOneByHashedKey(hashedKey: string): Promise<Key | null> {
     return this.keyRepository.findOneBy({ hashedKey });
+  }
+
+  async update(id: string, key: Partial<Key>): Promise<void> {
+    await this.keyRepository.update(id, key);
   }
 
   async remove(id: string): Promise<void> {

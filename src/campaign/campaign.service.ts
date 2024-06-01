@@ -8,9 +8,8 @@ import { CreateCampaignDto } from './dto/create-campaign.dto';
 export class CampaignService {
   constructor(protected campaignTable: CampaignTableService) {}
 
-  async create(userId: string, campaign: CreateCampaignDto): Promise<Campaign> {
-    const { startDate, endDate } = campaign;
-    return await this.campaignTable.createCampaign(userId, { startDate, endDate });
+  async create(campaign: CreateCampaignDto): Promise<Campaign> {
+    return await this.campaignTable.createCampaign(campaign.userId, campaign);
   }
 
   async findAll(userId: string): Promise<Campaign[]> {
