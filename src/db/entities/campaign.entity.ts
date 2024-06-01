@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'ty
 
 import { User } from './user.entity';
 import { Key } from './key.entity';
-import { Points } from './points.entity';
+import { Points } from '../../points/entities/points.entity';
 
 @Entity({ name: 'campaign' })
 export class Campaign {

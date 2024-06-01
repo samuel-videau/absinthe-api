@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'ty
 
 import { User } from './user.entity';
 import { Campaign } from './campaign.entity';
-import { Points } from './points.entity';
+import { Points } from '../../points/entities/points.entity';
 
 @Entity({ name: 'key' })
 export class Key {
@@ -18,10 +18,10 @@ export class Key {
   @Column({ type: 'timestamptz', nullable: true })
   endDate: Date | null;
 
-  @Column({ type: 'int' })
-  permission: KEY_PERMISSION;
+  @Column({ type: 'simple-array' })
+  permissions: KEY_PERMISSION[];
 
-  @ManyToOne(() => User, (user) => user.keys)
+  @ManyToOne(() => User, (user) => user.keys, { nullable: false })
   user: User;
 
   @ManyToOne(() => Campaign, (campaign) => campaign.keys, { nullable: true })
@@ -32,6 +32,10 @@ export class Key {
 }
 
 export enum KEY_PERMISSION {
-  FULL = 0,
-  CAMPAIGN = 1,
+  FULL = 'FULL',
+  GET = 'GET',
+  POST = 'POST',
+  DELETE = 'DELETE',
+  PUT = 'PUT',
+  PATCH = 'PATCH',
 }

@@ -6,7 +6,7 @@ export class UpdateKeyDto {
   endDate?: Date;
 
   @ApiPropertyOptional({ description: 'The new permission level of the key', enum: KEY_PERMISSION })
-  permission?: KEY_PERMISSION;
+  permissions?: KEY_PERMISSION[];
 
   @ApiPropertyOptional({ description: 'The new campaign ID associated with the key' })
   campaignId?: number;

@@ -1,30 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { KeyTableService } from 'src/db/tables/key.service';
 import { randomBytes } from 'crypto';
-import * as bcrypt from 'bcrypt';
 import { Campaign } from 'src/db/entities/campaign.entity';
 
 import { CreateKeyDto, CreateKeyResponseDto } from './dto/create-key.dto';
 import { UpdateKeyDto } from './dto/update-key.dto';
 import { KeyResponseDto } from './dto/key-response.dto';
 import { FindKeysDto } from './dto/find-keys.dto';
+import { hashApiKey } from './utils';
 
 @Injectable()
 export class KeyService {
   constructor(protected keyTable: KeyTableService) {}
 
   public async create(createKeyDto: CreateKeyDto): Promise<CreateKeyResponseDto> {
-    const { endDate, permission, campaignId } = createKeyDto;
-    const apiKey = this.generateApiKey();
-    const hashedKey = await this.hashApiKey(apiKey);
-    const keyRow = await this.keyTable.create({
+    const { endDate, permissions, campaignId } = createKeyDto;
+    const keySecret = this.generateApiKey();
+    const hashedKey = await hashApiKey(keySecret);
+    const keyRow = await this.keyTable.create(createKeyDto.userId, {
       hashedKey,
       endDate,
-      permission,
+      permissions,
       campaign: campaignId ? ({ id: campaignId } as Campaign) : null,
     });
 
-    return { id: keyRow.id, key: apiKey };
+    return { apiKey: `${keyRow.id}.${keySecret}` };
   }
 
   public async findAll(config: FindKeysDto): Promise<KeyResponseDto[]> {
@@ -35,10 +35,10 @@ export class KeyService {
   }
 
   public async update(id: string, updateKeyDto: UpdateKeyDto): Promise<void> {
-    const { endDate, permission, campaignId } = updateKeyDto;
+    const { endDate, permissions, campaignId } = updateKeyDto;
     await this.keyTable.update(id, {
       endDate,
-      permission,
+      permissions,
       campaign: campaignId ? ({ id: campaignId } as Campaign) : null,
     });
   }
@@ -48,11 +48,6 @@ export class KeyService {
   }
 
   protected generateApiKey(): string {
-    return randomBytes(32).toString('hex').slice(0, length);
-  }
-
-  protected async hashApiKey(apiKey: string): Promise<string> {
-    const saltRounds = 10;
-    return await bcrypt.hash(apiKey, saltRounds);
+    return randomBytes(32).toString('hex');
   }
 }

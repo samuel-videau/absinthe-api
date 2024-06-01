@@ -12,5 +12,5 @@ export class KeyResponseDto {
   endDate: Date | null;
 
   @ApiProperty({ description: 'The permission level of the key', enum: KEY_PERMISSION })
-  permission: KEY_PERMISSION;
+  permissions: KEY_PERMISSION[];
 }

@@ -5,8 +5,8 @@ export class CreateKeyDto {
   @ApiPropertyOptional({ description: 'The end date of the key', type: Date })
   endDate?: Date;
 
-  @ApiProperty({ description: 'The permission level of the key', enum: KEY_PERMISSION })
-  permission: KEY_PERMISSION;
+  @ApiProperty({ description: 'The permissions of the key' })
+  permissions: KEY_PERMISSION[];
 
   @ApiProperty({ description: 'The ID of the user associated with the key' })
   userId: string;
@@ -16,9 +16,6 @@ export class CreateKeyDto {
 }
 
 export class CreateKeyResponseDto {
-  @ApiProperty({ description: 'The ID of the created key' })
-  id: string;
-
-  @ApiProperty({ description: 'The generated key' })
-  key: string;
+  @ApiProperty({ description: 'The api key' })
+  apiKey: string;
 }

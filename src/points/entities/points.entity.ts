@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
 
-import { Campaign } from './campaign.entity';
-import { Key } from './key.entity';
+import { Campaign } from '../../db/entities/campaign.entity';
+import { Key } from '../../db/entities/key.entity';
 
 @Entity({ name: 'points' })
 export class Points {
@@ -15,7 +15,10 @@ export class Points {
   points: number;
 
   @Column()
-  metadata: string;
+  eventName: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  metadata: string | null;
 
   @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

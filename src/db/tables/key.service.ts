@@ -19,8 +19,8 @@ export class KeyTableService {
     private readonly campaignRepository: Repository<Campaign>,
   ) {}
 
-  async create(key: Partial<Key>): Promise<Key> {
-    return this.keyRepository.save(key);
+  async create(userId: string, key: Partial<Key>): Promise<Key> {
+    return this.keyRepository.save({ ...key, user: { id: userId } });
   }
 
   async findAll(userId?: string, campaignId?: number): Promise<Key[]> {

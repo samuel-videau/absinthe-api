@@ -19,7 +19,6 @@ export class CampaignController {
     type: Campaign,
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @ApiParam({ name: 'userId', description: 'ID of the user' })
   @ApiBody({ type: CreateCampaignDto })
   async create(@Body() createCampaignDto: CreateCampaignDto): Promise<Campaign> {
     return this.campaignService.create(createCampaignDto);
