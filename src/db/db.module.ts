@@ -6,17 +6,17 @@ import { ormconfig } from './orm-config';
 import { Campaign } from './entities/campaign.entity';
 import { Points } from './entities/points.entity';
 import { Key } from './entities/key.entity';
-import { UserService } from './user.service';
-import { CampaignService } from './campaign.service';
-import { KeyService } from './key.service';
-import { PointsService } from './points.service';
+import { UserTableService } from './tables/user.service';
+import { CampaignTableService } from './tables/campaign.service';
+import { KeyTableService } from './tables/key.service';
+import { PointsTableService } from './tables/points.service';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig),
     TypeOrmModule.forFeature([User, Campaign, Points, Key]),
   ],
-  providers: [UserService, PointsService, CampaignService, KeyService],
-  exports: [UserService, PointsService, CampaignService, KeyService],
+  providers: [UserTableService, PointsTableService, CampaignTableService, KeyTableService],
+  exports: [UserTableService, PointsTableService, CampaignTableService, KeyTableService],
 })
 export class DbModule {}

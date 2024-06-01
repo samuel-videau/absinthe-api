@@ -12,6 +12,9 @@ export class Campaign {
   @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
+  @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  startDate: Date;
+
   @Column({ type: 'timestamptz', nullable: true })
   endDate: Date | null;
 
@@ -29,7 +32,7 @@ export class Campaign {
 }
 
 export enum CAMPAIGN_STATUS {
-  LIVE = 0,
-  PAUSED = 1,
+  OFF = 0,
+  ON = 1,
   COMPLETED = 2,
 }

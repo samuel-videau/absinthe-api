@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Key } from './entities/key.entity';
-import { User } from './entities/user.entity';
-import { Campaign } from './entities/campaign.entity';
+import { Key } from '../entities/key.entity';
+import { User } from '../entities/user.entity';
+import { Campaign } from '../entities/campaign.entity';
 
 @Injectable()
-export class KeyService {
+export class KeyTableService {
   private readonly saltRounds = 10;
 
   constructor(

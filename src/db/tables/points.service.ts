@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Points } from './entities/points.entity';
-import { Campaign } from './entities/campaign.entity';
-import { Key } from './entities/key.entity';
+import { Points } from '../entities/points.entity';
+import { Campaign } from '../entities/campaign.entity';
+import { Key } from '../entities/key.entity';
 
 @Injectable()
-export class PointsService {
+export class PointsTableService {
   constructor(
     @InjectRepository(Points)
     private readonly pointsRepository: Repository<Points>,
