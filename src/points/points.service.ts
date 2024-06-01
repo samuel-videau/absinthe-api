@@ -1,13 +1,13 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ResourceAccess } from 'src/interfaces/api-request.interface';
 
 import { Points } from './entities/points.entity';
 import { Campaign } from '../campaign/entities/campaign.entity';
 import { Key } from '../key/entities/key.entity';
 import { CreatePointDto } from './dto/create-point.dto';
 import { FindPointsDto } from './dto/find-points.dto';
+import { ResourceAccess } from '../interfaces/api-request.interface';
 
 @Injectable()
 export class PointsService {

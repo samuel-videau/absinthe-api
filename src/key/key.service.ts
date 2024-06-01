@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
-import { Campaign } from 'src/campaign/entities/campaign.entity';
 
 import { CreateKeyDto, CreateKeyResponseDto } from './dto/create-key.dto';
 import { UpdateKeyDto } from './dto/update-key.dto';
@@ -11,6 +9,8 @@ import { KeyResponseDto } from './dto/key-response.dto';
 import { FindKeysDto } from './dto/find-keys.dto';
 import { hashApiKey } from './utils';
 import { Key } from './entities/key.entity';
+import { Campaign } from '../campaign/entities/campaign.entity';
+import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class KeyService {

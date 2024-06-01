@@ -1,12 +1,11 @@
 import { Controller, Post, Body, UseGuards, Req, Query, Get } from '@nestjs/common';
-import { ApiKeyGuard } from 'src/key/key.guard';
-import { ApiRequest } from 'src/interfaces/api-request.interface';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 
 import { CreatePointDto } from './dto/create-point.dto';
 import { PointsService } from './points.service';
 import { Points } from './entities/points.entity';
 import { FindPointsDto } from './dto/find-points.dto';
+import { ApiKeyGuard } from '../key/key.guard';
 
 @ApiTags('points')
 @ApiBearerAuth()

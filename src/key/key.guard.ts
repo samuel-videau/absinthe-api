@@ -7,10 +7,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ApiRequest } from 'src/interfaces/api-request.interface';
 
 import { compareApiKey } from './utils';
 import { Key, KEY_PERMISSION } from './entities/key.entity';
+import { ApiRequest } from '../interfaces/api-request.interface';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
