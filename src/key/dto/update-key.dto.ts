@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { KEY_PERMISSION } from 'src/db/entities/key.entity';
+
+import { KEY_PERMISSION } from '../entities/key.entity';
 
 export class UpdateKeyDto {
   @ApiPropertyOptional({ description: 'The new end date of the key', type: Date })

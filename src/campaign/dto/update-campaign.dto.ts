@@ -1,8 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
-import { CAMPAIGN_STATUS } from 'src/db/entities/campaign.entity';
 
 import { CreateCampaignDto } from './create-campaign.dto';
+import { CAMPAIGN_STATUS } from '../entities/campaign.entity';
 
 export class UpdateCampaignDto extends PartialType(CreateCampaignDto) {
   @ApiProperty({ description: 'The user ID of the campaign owner' })

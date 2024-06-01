@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
-import { DbModule } from 'src/db/db.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Campaign } from 'src/campaign/entities/campaign.entity';
+import { User } from 'src/user/entities/user.entity';
 
-import { KeyService } from './key.service';
 import { KeyController } from './key.controller';
+import { KeyService } from './key.service';
+import { Key } from './entities/key.entity';
 
 @Module({
-  imports: [DbModule],
+  imports: [TypeOrmModule.forFeature([User, Campaign, Key])],
   controllers: [KeyController],
   providers: [KeyService],
 })

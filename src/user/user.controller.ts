@@ -1,8 +1,8 @@
 import { Controller, Post } from '@nestjs/common';
-import { User } from 'src/db/entities/user.entity';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 import { UserService } from './user.service';
+import { User } from './entities/user.entity';
 
 @ApiTags('users')
 @Controller('users')

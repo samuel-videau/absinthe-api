@@ -6,11 +6,11 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { KEY_PERMISSION, Key } from 'src/db/entities/key.entity';
 import { Repository } from 'typeorm';
 import { ApiRequest } from 'src/interfaces/api-request.interface';
 
 import { compareApiKey } from './utils';
+import { Key, KEY_PERMISSION } from './entities/key.entity';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {

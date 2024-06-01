@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
 
-import { User } from './user.entity';
-import { Campaign } from './campaign.entity';
+import { Campaign } from '../../campaign/entities/campaign.entity';
 import { Points } from '../../points/entities/points.entity';
 
 @Entity({ name: 'key' })

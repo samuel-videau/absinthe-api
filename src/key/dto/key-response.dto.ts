@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { KEY_PERMISSION } from 'src/db/entities/key.entity';
+
+import { KEY_PERMISSION } from '../entities/key.entity';
 
 export class KeyResponseDto {
   @ApiProperty({ description: 'The ID of the key' })

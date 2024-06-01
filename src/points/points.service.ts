@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 import { ResourceAccess } from 'src/interfaces/api-request.interface';
 
 import { Points } from './entities/points.entity';
-import { Campaign } from '../db/entities/campaign.entity';
-import { Key } from '../db/entities/key.entity';
+import { Campaign } from '../campaign/entities/campaign.entity';
+import { Key } from '../key/entities/key.entity';
 import { CreatePointDto } from './dto/create-point.dto';
 import { FindPointsDto } from './dto/find-points.dto';
 

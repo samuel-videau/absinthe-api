@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Query, ForbiddenException } from '@nestjs/common';
-import { Campaign } from 'src/db/entities/campaign.entity';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
 
 import { CampaignService } from './campaign.service';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
+import { Campaign } from './entities/campaign.entity';
 
 @ApiTags('campaigns')
 @Controller('campaigns')

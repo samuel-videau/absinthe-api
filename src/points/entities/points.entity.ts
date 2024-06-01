@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
 
-import { Campaign } from '../../db/entities/campaign.entity';
-import { Key } from '../../db/entities/key.entity';
+import { Campaign } from '../../campaign/entities/campaign.entity';
+import { Key } from '../../key/entities/key.entity';
 
 @Entity({ name: 'points' })
 export class Points {

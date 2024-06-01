@@ -1,7 +1,6 @@
+import { Campaign } from 'src/campaign/entities/campaign.entity';
+import { Key } from 'src/key/entities/key.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-
-import { Campaign } from './campaign.entity';
-import { Key } from './key.entity';
 
 @Entity({ name: 'user' })
 export class User {
