@@ -21,6 +21,7 @@ async function bootstrap(): Promise<void> {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Allowed methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
     credentials: true, // Allow credentials
+    preflightContinue: false,
   });
 
   await app.listen(process.env.PORT || 3000);
