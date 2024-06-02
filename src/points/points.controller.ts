@@ -6,6 +6,7 @@ import { PointsService } from './points.service';
 import { Points } from './entities/points.entity';
 import { FindPointsDto } from './dto/find-points.dto';
 import { ApiKeyGuard } from '../key/key.guard';
+import { ApiRequest } from '../interfaces/api-request.interface';
 
 @ApiTags('points')
 @ApiBearerAuth()
