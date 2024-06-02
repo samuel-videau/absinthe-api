@@ -13,7 +13,7 @@ services:
       - "3001:3000"
     environment:
       PORT: 3000
-      NODE_ENV: dev
+      NODE_ENV: development
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       POSTGRES_USER: postgres

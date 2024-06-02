@@ -13,9 +13,14 @@ async function bootstrap(): Promise<void> {
       .setVersion('1.0')
       .build();
     const document = SwaggerModule.createDocument(app, config);
-
     SwaggerModule.setup('docs', app, document);
   }
+
+  app.enableCors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    credentials: true,
+  });
 
   await app.listen(process.env.PORT || 3000);
 }
