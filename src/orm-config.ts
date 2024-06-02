@@ -12,6 +12,7 @@ export const ormconfig: DataSourceOptions = {
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   migrations: ['src/db/migrations/*.ts'],
   synchronize: true,
+  ssl: process.env.NODE_ENV === 'production',
 };
 
 const datasource = new DataSource(ormconfig);
