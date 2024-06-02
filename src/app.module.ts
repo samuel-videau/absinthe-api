@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 import { AppService } from './app.service';
 import { EnvModule } from './env/env.module';
@@ -17,6 +19,10 @@ import { ormconfig } from './orm-config';
     CampaignModule,
     PointsModule,
     TypeOrmModule.forRoot(ormconfig),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'swagger-static'),
+      serveRoot: '/docs',
+    }),
   ],
   providers: [AppService],
 })
