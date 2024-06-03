@@ -1,3 +1,15 @@
+## [1.0.3](https://github.com/samuel-videau/absinthe-api/compare/v1.0.2...v1.0.3) (2024-06-03)
+
+
+### Bug Fixes
+
+* check campaign status when creating points ([9356cb2](https://github.com/samuel-videau/absinthe-api/commit/9356cb2a29ed2803213cb5c89731ebddbcf252f9))
+
+
+### Reverts
+
+* Revert "fix: can't add points if campaign not on" ([ac91656](https://github.com/samuel-videau/absinthe-api/commit/ac91656adf7d8a83c24d42cc475a8986ca10a86e))
+
 ## [1.0.2](https://github.com/samuel-videau/absinthe-api/compare/v1.0.1...v1.0.2) (2024-06-03)
 
 
