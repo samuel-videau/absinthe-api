@@ -9,7 +9,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { getAddress } from 'ethers';
 
 import { Points } from './entities/points.entity';
-import { Campaign } from '../campaign/entities/campaign.entity';
+import { CAMPAIGN_STATUS, Campaign } from '../campaign/entities/campaign.entity';
 import { Key } from '../key/entities/key.entity';
 import { CreatePointDto } from './dto/create-point.dto';
 import { FindPointsDto } from './dto/find-points.dto';
@@ -31,6 +31,11 @@ export class PointsService {
     const { campaignId, points, metadata } = input;
     let address: string;
     this.verifyResourceAccess(access, campaignId);
+
+    const campaign = await this.campaignRepository.findOneBy({ id: campaignId });
+    if (!campaign) throw new NotFoundException('Campaign not found');
+    if (campaign.status !== CAMPAIGN_STATUS.ON)
+      throw new BadRequestException('Campaign is not active');
 
     try {
       address = getAddress(input.address.toLowerCase());
