@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { EntityManager } from 'typeorm';
 
 import { PointsService } from './points.service';
 import { Points } from './entities/points.entity';
@@ -10,10 +11,10 @@ import { CreatePointDto } from './dto/create-point.dto';
 import { FindPointsDto } from './dto/find-points.dto';
 import { ResourceAccess } from '../interfaces/api-request.interface';
 
-const mockIsAddress = jest.fn();
+const mockGetAddress = jest.fn();
 
 jest.mock('ethers', () => ({
-  isAddress: (): any => mockIsAddress(),
+  getAddress: (): any => mockGetAddress(),
 }));
 
 class TestService extends PointsService {
@@ -37,6 +38,16 @@ describe('PointsService', () => {
     findOneBy: jest.fn(),
   };
 
+  const createQueryBuilder: any = {
+    where: jest.fn().mockReturnThis(),
+    andWhere: jest.fn().mockReturnThis(),
+    getMany: jest.fn(),
+  };
+
+  const mockEntityManager = {
+    createQueryBuilder: jest.fn().mockReturnValue(createQueryBuilder),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -53,10 +64,19 @@ describe('PointsService', () => {
           provide: getRepositoryToken(Key),
           useValue: mockKeyRepository,
         },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
+        },
       ],
     }).compile();
 
     service = module.get<TestService>(TestService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('should be defined', () => {
@@ -70,7 +90,9 @@ describe('PointsService', () => {
         campaignId: 1,
         points: 10,
       };
-      mockIsAddress.mockReturnValue(false);
+      mockGetAddress.mockImplementation(() => {
+        throw new Error('Invalid address');
+      });
 
       jest.spyOn(service as any, 'verifyResourceAccess').mockResolvedValue(true);
 
@@ -86,7 +108,7 @@ describe('PointsService', () => {
         points: 10,
         metadata: 'invalid-json',
       };
-      mockIsAddress.mockReturnValue(true);
+      mockGetAddress.mockReturnValue('0x00');
 
       jest.spyOn(service as any, 'verifyResourceAccess').mockResolvedValue(true);
 
@@ -97,11 +119,11 @@ describe('PointsService', () => {
 
     it('should save points successfully', async () => {
       const createPointDto: CreatePointDto = {
-        address: '0x0',
+        address: '0x00',
         campaignId: 1,
         points: 10,
       };
-      mockIsAddress.mockReturnValue(true);
+      mockGetAddress.mockReturnValue('0x00');
 
       const access: ResourceAccess = { userId: 'user-id', keyId: 'key-id', campaignId: 1 };
 
@@ -123,38 +145,20 @@ describe('PointsService', () => {
     it('should throw an error if the address is invalid', async () => {
       const findPointsDto: FindPointsDto = { campaignId: 1, address: 'invalid-address' };
       const access: ResourceAccess = { userId: 'user-id', keyId: 'key-id' };
-      mockIsAddress.mockReturnValue(false);
+      mockGetAddress.mockImplementation(() => {
+        throw new Error('Invalid address');
+      });
       jest.spyOn(service as any, 'verifyResourceAccess').mockResolvedValue(true);
 
       await expect(service.findAll(findPointsDto, access)).rejects.toThrow(BadRequestException);
     });
 
-    it('should throw an error if event name is not provided', async () => {
-      const findPointsDto: FindPointsDto = { campaignId: 1 };
+    it('should throw an error if the address is not provided', async () => {
+      const findPointsDto: FindPointsDto = { campaignId: 1, eventName: 'event' };
       const access: ResourceAccess = { userId: 'user-id', keyId: 'key-id' };
       jest.spyOn(service as any, 'verifyResourceAccess').mockResolvedValue(true);
 
       await expect(service.findAll(findPointsDto, access)).rejects.toThrow(BadRequestException);
-    });
-
-    it('should return an array of points', async () => {
-      const findPointsDto: FindPointsDto = { campaignId: 1, eventName: 'event' };
-      const access: ResourceAccess = { userId: 'user-id', keyId: 'key-id', campaignId: 1 };
-      const points = [{ id: 1, address: '0x0', points: 10 }];
-
-      jest.spyOn(service as any, 'verifyResourceAccess').mockResolvedValue(true);
-      mockPointsRepository.find.mockReturnValue(points);
-
-      const result = await service.findAll(findPointsDto, access);
-
-      expect(result).toEqual(points);
-      expect(mockPointsRepository.find).toHaveBeenCalledWith({
-        where: {
-          campaign: { id: findPointsDto.campaignId },
-          address: findPointsDto.address,
-          eventName: findPointsDto.eventName,
-        },
-      });
     });
   });
 

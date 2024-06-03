@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import { isAddress } from 'ethers';
+import { getAddress } from 'ethers';
 
 import { Points } from './entities/points.entity';
 import { Campaign } from '../campaign/entities/campaign.entity';
@@ -28,10 +28,17 @@ export class PointsService {
   ) {}
 
   async create(input: CreatePointDto, access: ResourceAccess): Promise<Points> {
-    const { campaignId, address, points, metadata } = input;
+    const { campaignId, points, metadata } = input;
+    let address: string;
     this.verifyResourceAccess(access, campaignId);
 
-    if (!isAddress(address) || !campaignId || !points) {
+    try {
+      address = getAddress(input.address.toLowerCase());
+    } catch (e) {
+      throw new BadRequestException('Invalid address');
+    }
+
+    if (!campaignId || !points) {
       throw new BadRequestException('Invalid parameters');
     }
     if (metadata) {
@@ -44,16 +51,21 @@ export class PointsService {
 
     return this.pointsRepository.save({
       ...input,
+      address,
       campaign: { id: campaignId },
       key: { id: access.keyId },
     });
   }
 
   async findAll(query: FindPointsDto, access: ResourceAccess): Promise<Points[]> {
-    const { campaignId, address, eventName } = query;
+    const { campaignId, eventName } = query;
     this.verifyResourceAccess(access, campaignId);
+    let address: string;
 
-    if (address && !isAddress(address)) {
+    if (!query.address) throw new BadRequestException('Address is required');
+    try {
+      address = getAddress(query.address.toLowerCase());
+    } catch (e) {
       throw new BadRequestException('Invalid address');
     }
 

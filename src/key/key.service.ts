@@ -10,15 +10,12 @@ import { FindKeysDto } from './dto/find-keys.dto';
 import { hashApiKey } from './utils';
 import { Key } from './entities/key.entity';
 import { Campaign } from '../campaign/entities/campaign.entity';
-import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class KeyService {
   constructor(
     @InjectRepository(Key)
     private readonly keyRepository: Repository<Key>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
     @InjectRepository(Campaign)
     private readonly campaignRepository: Repository<Campaign>,
   ) {}
@@ -37,9 +34,10 @@ export class KeyService {
         where: { id: campaignId },
         relations: ['user'],
       });
-      if (!campaign || campaign.user.id !== userId) {
-        console.log(campaign);
+      if (!campaign) {
         throw new BadRequestException('Invalid campaign');
+      } else if (campaign.user.id !== userId) {
+        throw new ForbiddenException('User does not own the campaign');
       }
     }
 
