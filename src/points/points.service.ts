@@ -9,7 +9,7 @@ import { EntityManager, Repository } from 'typeorm';
 import { getAddress } from 'ethers';
 
 import { Points } from './entities/points.entity';
-import { CAMPAIGN_STATUS, Campaign } from '../campaign/entities/campaign.entity';
+import { Campaign } from '../campaign/entities/campaign.entity';
 import { Key } from '../key/entities/key.entity';
 import { CreatePointDto } from './dto/create-point.dto';
 import { FindPointsDto } from './dto/find-points.dto';
@@ -106,11 +106,6 @@ export class PointsService {
         return true;
       }
     }
-
-    if (campaign.status !== CAMPAIGN_STATUS.ON) {
-      throw new ForbiddenException('Campaign is not active');
-    }
-
     throw new ForbiddenException('Unauthorized');
   }
 }
