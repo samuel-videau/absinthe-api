@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -24,7 +24,24 @@ export class KeyService {
   ) {}
 
   public async create(createKeyDto: CreateKeyDto): Promise<CreateKeyResponseDto> {
-    const { endDate, permissions, campaignId } = createKeyDto;
+    const { userId, endDate, permissions, campaignId } = createKeyDto;
+
+    if (endDate && endDate < new Date()) {
+      throw new BadRequestException('Invalid end date');
+    }
+    if (permissions.length === 0) {
+      throw new BadRequestException('Permissions are required');
+    }
+    if (campaignId) {
+      const campaign = await this.campaignRepository.findOneBy({ id: campaignId });
+      if (!campaign) {
+        throw new BadRequestException('Invalid campaign');
+      }
+      if (campaign.user.id !== userId) {
+        throw new ForbiddenException('Invalid campaign');
+      }
+    }
+
     const keySecret = this.generateApiKey();
     const hashedKey = await hashApiKey(keySecret);
     const keyRow = await this.keyRepository.save({
@@ -32,7 +49,7 @@ export class KeyService {
       endDate,
       permissions,
       campaign: campaignId ? ({ id: campaignId } as Campaign) : null,
-      user: { id: createKeyDto.userId },
+      user: { id: userId },
     });
 
     return { apiKey: `${keyRow.id}.${keySecret}` };
@@ -50,6 +67,28 @@ export class KeyService {
 
   public async update(id: string, updateKeyDto: UpdateKeyDto): Promise<void> {
     const { endDate, permissions, campaignId } = updateKeyDto;
+
+    const key = await this.keyRepository.findOneBy({ id });
+    if (!key) {
+      throw new BadRequestException('Invalid key');
+    }
+
+    if (endDate && endDate < new Date()) {
+      throw new BadRequestException('Invalid end date');
+    }
+    if (permissions && permissions.length === 0) {
+      throw new BadRequestException('Permissions are required');
+    }
+    if (campaignId) {
+      const campaign = await this.campaignRepository.findOneBy({ id: campaignId });
+      if (!campaign) {
+        throw new BadRequestException('Invalid campaign');
+      }
+      if (campaign.user.id !== key.user.id) {
+        throw new ForbiddenException('Invalid campaign');
+      }
+    }
+
     await await this.keyRepository.update(id, {
       endDate,
       permissions,

@@ -1,6 +1,12 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { isAddress } from 'ethers';
 
 import { Points } from './entities/points.entity';
 import { Campaign } from '../campaign/entities/campaign.entity';
@@ -20,23 +26,44 @@ export class PointsService {
     private readonly keyRepository: Repository<Key>,
   ) {}
 
-  async create(points: CreatePointDto, access: ResourceAccess): Promise<Points> {
-    this.verifyResourceAccess(access, points.campaignId);
+  async create(input: CreatePointDto, access: ResourceAccess): Promise<Points> {
+    const { campaignId, address, points, metadata } = input;
+    this.verifyResourceAccess(access, campaignId);
+
+    if (!isAddress(address) || !campaignId || !points) {
+      throw new BadRequestException('Invalid parameters');
+    }
+    if (metadata) {
+      try {
+        JSON.parse(metadata);
+      } catch (e) {
+        throw new BadRequestException('Invalid metadata');
+      }
+    }
 
     return this.pointsRepository.save({
-      ...points,
-      campaign: { id: points.campaignId },
+      ...input,
+      campaign: { id: campaignId },
       key: { id: access.keyId },
     });
   }
 
   async findAll(query: FindPointsDto, access: ResourceAccess): Promise<Points[]> {
-    this.verifyResourceAccess(access, query.campaignId);
+    const { campaignId, address, eventName } = query;
+    this.verifyResourceAccess(access, campaignId);
+
+    if (address && !isAddress(address)) {
+      throw new BadRequestException('Invalid address');
+    }
+    if (!eventName) {
+      throw new BadRequestException('Invalid event name');
+    }
+
     return this.pointsRepository.find({
       where: {
-        campaign: { id: query.campaignId },
-        address: query.address,
-        eventName: query.eventName,
+        campaign: { id: campaignId },
+        address,
+        eventName,
       },
     });
   }

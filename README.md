@@ -1,73 +1,117 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Absinthe API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Overview
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Absinthe API is a RESTful API built with the NestJS framework, designed to provide a robust and scalable backend solution for managing users, points, keys, and campaigns. This project includes Docker support for easier deployment and setup.
 
-## Description
+## Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- User management
+- Points management
+- Key management
+- Campaign management
+- API documentation with Swagger
+- Environment configuration with dotenv
+- PostgreSQL database integration with TypeORM
+
+## Prerequisites
+
+- Node.js
+- Docker
+- PostgreSQL
 
 ## Installation
 
-```bash
-$ yarn install
-```
-
-## Running the app
+1. Clone the repository:
 
 ```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+git clone https://github.com/your-username/absinthe-api.git
+cd absinthe-api
 ```
 
-## Test
+2. Start the Docker containers:
 
 ```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+docker-compose up --build
 ```
 
-## Support
+## Available Scripts
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- `build`: Builds the NestJS application.
+- `start`: Starts the application.
+- `start:dev`: Starts the application in development mode with hot-reload.
+- `start:debug`: Starts the application in debug mode.
+- `start:prod`: Starts the application in production mode.
+- `format`: Formats the code using Prettier.
+- `lint`: Lints the code and fixes issues automatically.
+- `test`: Runs all tests.
+- `test:watch`: Runs all tests in watch mode.
+- `test:cov`: Runs all tests and generates a coverage report.
 
-## Stay in touch
+## API Documentation
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+The API documentation is available via Swagger. When running the application in development mode, access the documentation at:
 
-## License
+```
+http://localhost:{PORT}/docs
+```
 
-Nest is [MIT licensed](LICENSE).
+## Environment Variables
+
+The application relies on several environment variables for configuration. Create a `.env` file in the root directory with the following variables:
+
+```plaintext
+PORT=3001
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=123456
+DB_NAME=absinthe
+```
+## Controllers and Services
+
+The application is structured with several controllers and services to manage different resources.
+
+### User Management
+
+- **Controller**: `UserController`
+- **Service**: `UserService`
+
+### Points Management
+
+- **Controller**: `PointsController`
+- **Service**: `PointsService`
+
+### Key Management
+
+- **Controller**: `KeyController`
+- **Service**: `KeyService`
+
+### Campaign Management
+
+- **Controller**: `CampaignController`
+- **Service**: `CampaignService`
+
+## Running Tests
+
+To run tests, use the following command:
+
+```bash
+yarn test
+```
+
+For watching tests:
+
+```bash
+yarn test:watch
+```
+
+For generating a coverage report:
+
+```bash
+yarn test:cov
+```
+
+## Author
+
+[Samuel VIDEAU](https://github.com/samuel-videau)
