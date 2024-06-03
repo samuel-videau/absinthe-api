@@ -57,6 +57,9 @@ export class KeyService {
 
   public async findAll(config: FindKeysDto): Promise<KeyResponseDto[]> {
     const { userId, campaignId } = config;
+
+    if (!userId) throw new ForbiddenException('Invalid request');
+
     const keys = await this.keyRepository.findBy({
       user: userId ? { id: userId } : undefined,
       campaign: campaignId ? { id: campaignId } : undefined,
