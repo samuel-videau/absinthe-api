@@ -32,6 +32,11 @@ export class PointsService {
     let address: string;
     this.verifyResourceAccess(access, campaignId);
 
+    const campaign = await this.campaignRepository.findOneBy({ id: campaignId });
+    if (!campaign) throw new NotFoundException('Campaign not found');
+    if (campaign.status !== CAMPAIGN_STATUS.ON)
+      throw new BadRequestException('Campaign is not active');
+
     try {
       address = getAddress(input.address.toLowerCase());
     } catch (e) {
@@ -106,11 +111,6 @@ export class PointsService {
         return true;
       }
     }
-
-    if (campaign.status !== CAMPAIGN_STATUS.ON) {
-      throw new ForbiddenException('Campaign is not active');
-    }
-
     throw new ForbiddenException('Unauthorized');
   }
 }
