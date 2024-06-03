@@ -1,4 +1,14 @@
-import { Controller, Post, Body, UseGuards, Req, Query, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  Query,
+  Get,
+  Logger,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 
 import { CreatePointDto } from './dto/create-point.dto';
@@ -13,6 +23,8 @@ import { ApiRequest } from '../interfaces/api-request.interface';
 @Controller('points')
 @UseGuards(ApiKeyGuard)
 export class PointsController {
+  private readonly logger = new Logger('HTTP');
+
   constructor(private readonly pointsService: PointsService) {}
 
   @Post()
@@ -24,7 +36,12 @@ export class PointsController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   create(@Body() createPointDto: CreatePointDto, @Req() request: ApiRequest): Promise<Points> {
-    return this.pointsService.create(createPointDto, request.access);
+    try {
+      return this.pointsService.create(createPointDto, request.access);
+    } catch (error) {
+      this.logger.error(error.message);
+      throw new InternalServerErrorException();
+    }
   }
 
   @Get()
@@ -32,6 +49,11 @@ export class PointsController {
   @ApiResponse({ status: 200, description: 'Return all points.', type: [Points] })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   findAll(@Query() query: FindPointsDto, @Req() request: ApiRequest): Promise<Points[]> {
-    return this.pointsService.findAll(query, request.access);
+    try {
+      return this.pointsService.findAll(query, request.access);
+    } catch (error) {
+      this.logger.error(error.message);
+      throw new InternalServerErrorException();
+    }
   }
 }

@@ -33,12 +33,13 @@ export class KeyService {
       throw new BadRequestException('Permissions are required');
     }
     if (campaignId) {
-      const campaign = await this.campaignRepository.findOneBy({ id: campaignId });
-      if (!campaign) {
+      const campaign = await this.campaignRepository.findOne({
+        where: { id: campaignId },
+        relations: ['user'],
+      });
+      if (!campaign || campaign.user.id !== userId) {
+        console.log(campaign);
         throw new BadRequestException('Invalid campaign');
-      }
-      if (campaign.user.id !== userId) {
-        throw new ForbiddenException('Invalid campaign');
       }
     }
 
@@ -60,9 +61,12 @@ export class KeyService {
 
     if (!userId) throw new ForbiddenException('Invalid request');
 
-    const keys = await this.keyRepository.findBy({
-      user: userId ? { id: userId } : undefined,
-      campaign: campaignId ? { id: campaignId } : undefined,
+    const keys = await this.keyRepository.find({
+      where: {
+        user: userId ? { id: userId } : undefined,
+        campaign: campaignId ? { id: campaignId } : undefined,
+      },
+      relations: ['campaign'],
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return keys.map(({ hashedKey, ...rest }) => rest);
