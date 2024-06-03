@@ -1,3 +1,12 @@
+## [1.0.1](https://github.com/samuel-videau/absinthe-api/compare/v1.0.0...v1.0.1) (2024-06-03)
+
+
+### Bug Fixes
+
+* multiple fixes ([50fe18e](https://github.com/samuel-videau/absinthe-api/commit/50fe18e52779b21ac68ebe8b7fb0e76cc405ec99))
+* search points no case sensitive ([74c74ed](https://github.com/samuel-videau/absinthe-api/commit/74c74ed146ac3450828f9f80e0fc3533d9e07ba8))
+* userId required for fetch keys ([ea25ac5](https://github.com/samuel-videau/absinthe-api/commit/ea25ac52e9ac01ded2f4b2f783b1c26aa2ca04bc))
+
 # 1.0.0 (2024-06-03)
 
 
