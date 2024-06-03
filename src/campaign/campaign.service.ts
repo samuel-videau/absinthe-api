@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -16,7 +16,16 @@ export class CampaignService {
   ) {}
 
   async create(campaign: CreateCampaignDto): Promise<Campaign> {
-    const { userId } = campaign;
+    const { userId, name, startDate, endDate } = campaign;
+
+    if (!name) {
+      throw new BadRequestException('Name is required');
+    }
+
+    if (endDate && (endDate < startDate || endDate < new Date())) {
+      throw new BadRequestException('End date must be after start date');
+    }
+
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new NotFoundException(`User with ID ${userId} not found`);
