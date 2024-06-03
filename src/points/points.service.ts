@@ -4,8 +4,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { isAddress } from 'ethers';
 
 import { Points } from './entities/points.entity';
@@ -24,6 +24,7 @@ export class PointsService {
     private readonly campaignRepository: Repository<Campaign>,
     @InjectRepository(Key)
     private readonly keyRepository: Repository<Key>,
+    @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
 
   async create(input: CreatePointDto, access: ResourceAccess): Promise<Points> {
@@ -55,17 +56,20 @@ export class PointsService {
     if (address && !isAddress(address)) {
       throw new BadRequestException('Invalid address');
     }
-    if (!eventName) {
-      throw new BadRequestException('Invalid event name');
+
+    const queryBuilder = this.entityManager
+      .createQueryBuilder(Points, 'points')
+      .where('points.campaignId = :campaignId', { campaignId });
+
+    if (address) {
+      queryBuilder.andWhere('LOWER(points.address) = LOWER(:address)', { address });
     }
 
-    return this.pointsRepository.find({
-      where: {
-        campaign: { id: campaignId },
-        address,
-        eventName,
-      },
-    });
+    if (eventName) {
+      queryBuilder.andWhere('LOWER(points.eventName) = LOWER(:eventName)', { eventName });
+    }
+
+    return queryBuilder.getMany();
   }
 
   async remove(id: number): Promise<void> {
