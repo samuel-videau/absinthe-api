@@ -10,15 +10,12 @@ import { FindKeysDto } from './dto/find-keys.dto';
 import { hashApiKey } from './utils';
 import { Key } from './entities/key.entity';
 import { Campaign } from '../campaign/entities/campaign.entity';
-import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class KeyService {
   constructor(
     @InjectRepository(Key)
     private readonly keyRepository: Repository<Key>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
     @InjectRepository(Campaign)
     private readonly campaignRepository: Repository<Campaign>,
   ) {}
@@ -33,12 +30,14 @@ export class KeyService {
       throw new BadRequestException('Permissions are required');
     }
     if (campaignId) {
-      const campaign = await this.campaignRepository.findOneBy({ id: campaignId });
+      const campaign = await this.campaignRepository.findOne({
+        where: { id: campaignId },
+        relations: ['user'],
+      });
       if (!campaign) {
         throw new BadRequestException('Invalid campaign');
-      }
-      if (campaign.user.id !== userId) {
-        throw new ForbiddenException('Invalid campaign');
+      } else if (campaign.user.id !== userId) {
+        throw new ForbiddenException('User does not own the campaign');
       }
     }
 
@@ -57,9 +56,15 @@ export class KeyService {
 
   public async findAll(config: FindKeysDto): Promise<KeyResponseDto[]> {
     const { userId, campaignId } = config;
-    const keys = await this.keyRepository.findBy({
-      user: userId ? { id: userId } : undefined,
-      campaign: campaignId ? { id: campaignId } : undefined,
+
+    if (!userId) throw new ForbiddenException('Invalid request');
+
+    const keys = await this.keyRepository.find({
+      where: {
+        user: userId ? { id: userId } : undefined,
+        campaign: campaignId ? { id: campaignId } : undefined,
+      },
+      relations: ['campaign'],
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return keys.map(({ hashedKey, ...rest }) => rest);

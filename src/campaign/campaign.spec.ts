@@ -6,6 +6,7 @@ import { CampaignService } from './campaign.service';
 import { Campaign } from './entities/campaign.entity';
 import { User } from '../user/entities/user.entity';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
+import { UpdateCampaignDto } from './dto/update-campaign.dto';
 
 describe('CampaignService', () => {
   let service: CampaignService;
@@ -129,46 +130,32 @@ describe('CampaignService', () => {
       expect(mockCampaignRepository.findOneBy).toHaveBeenCalledWith({ id: campaignId });
     });
 
-    it('should return null if campaign does not exist', async () => {
+    it('should throw an error if campaign does not exist', async () => {
       const campaignId = 1;
       mockCampaignRepository.findOneBy.mockReturnValue(null);
 
-      const result = await service.findOne(campaignId);
-
-      expect(result).toBeNull();
-      expect(mockCampaignRepository.findOneBy).toHaveBeenCalledWith({ id: campaignId });
-    });
-  });
-
-  describe('remove', () => {
-    it('should delete a campaign', async () => {
-      const campaignId = 1;
-      mockCampaignRepository.delete.mockReturnValue(undefined);
-
-      await service.remove(campaignId);
-
-      expect(mockCampaignRepository.delete).toHaveBeenCalledWith(campaignId);
+      await expect(service.findOne(campaignId)).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('update', () => {
     it('should throw an error if campaign does not exist', async () => {
       const campaignId = 1;
-      const updateData = { id: campaignId, name: 'Updated Campaign' };
+      const updateData: UpdateCampaignDto = { name: 'Updated Campaign', userId: 'user-id' };
       mockCampaignRepository.findOneBy.mockReturnValue(null);
 
-      await expect(service.update(updateData)).rejects.toThrow(NotFoundException);
+      await expect(service.update(campaignId, updateData)).rejects.toThrow(NotFoundException);
     });
 
     it('should update and save a campaign', async () => {
       const campaignId = 1;
-      const updateData = { id: campaignId, name: 'Updated Campaign' };
+      const updateData: UpdateCampaignDto = { name: 'Updated Campaign', userId: '' };
       const existingCampaign = { id: campaignId, name: 'Old Campaign' };
 
       mockCampaignRepository.findOneBy.mockReturnValue(existingCampaign);
       mockCampaignRepository.save.mockReturnValue({ ...existingCampaign, ...updateData });
 
-      const result = await service.update(updateData);
+      const result = await service.update(campaignId, updateData);
 
       expect(result).toEqual({ ...existingCampaign, ...updateData });
       expect(mockCampaignRepository.findOneBy).toHaveBeenCalledWith({ id: campaignId });

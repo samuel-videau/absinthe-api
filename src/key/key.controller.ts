@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  Logger,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
 
 import { KeyService } from './key.service';
@@ -10,6 +21,8 @@ import { KeyResponseDto } from './dto/key-response.dto';
 @ApiTags('keys')
 @Controller('keys')
 export class KeyController {
+  private readonly logger = new Logger('HTTP');
+
   constructor(private readonly keyService: KeyService) {}
 
   @Post()
@@ -21,7 +34,12 @@ export class KeyController {
   })
   @ApiBody({ type: CreateKeyDto })
   create(@Body() createKeyDto: CreateKeyDto): Promise<CreateKeyResponseDto> {
-    return this.keyService.create(createKeyDto);
+    try {
+      return this.keyService.create(createKeyDto);
+    } catch (error) {
+      this.logger.error(error.message);
+      throw new InternalServerErrorException();
+    }
   }
 
   @Get()
@@ -32,7 +50,12 @@ export class KeyController {
     type: [KeyResponseDto],
   })
   findAll(@Query() findKeys: FindKeysDto): Promise<KeyResponseDto[]> {
-    return this.keyService.findAll(findKeys);
+    try {
+      return this.keyService.findAll(findKeys);
+    } catch (error) {
+      this.logger.error(error.message);
+      throw new InternalServerErrorException();
+    }
   }
 
   @Patch(':keyId')
@@ -40,7 +63,12 @@ export class KeyController {
   @ApiResponse({ status: 200, description: 'The key has been successfully updated.' })
   @ApiParam({ name: 'keyId', description: 'The ID of the key to update' })
   update(@Param('keyId') keyId: string, @Body() updateKeyDto: UpdateKeyDto): Promise<void> {
-    return this.keyService.update(keyId, updateKeyDto);
+    try {
+      return this.keyService.update(keyId, updateKeyDto);
+    } catch (error) {
+      this.logger.error(error.message);
+      throw new InternalServerErrorException();
+    }
   }
 
   @Delete(':keyId')
@@ -48,6 +76,11 @@ export class KeyController {
   @ApiResponse({ status: 200, description: 'The key has been successfully removed.' })
   @ApiParam({ name: 'keyId', description: 'The ID of the key to remove' })
   remove(@Param('keyId') keyId: string): Promise<void> {
-    return this.keyService.remove(keyId);
+    try {
+      return this.keyService.remove(keyId);
+    } catch (error) {
+      this.logger.error(error.message);
+      throw new InternalServerErrorException();
+    }
   }
 }

@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { Campaign } from './entities/campaign.entity';
 import { User } from '../user/entities/user.entity';
+import { UpdateCampaignDto } from './dto/update-campaign.dto';
 
 @Injectable()
 export class CampaignService {
@@ -39,18 +40,19 @@ export class CampaignService {
     return this.campaignRepository.findBy({ user: { id: userId } });
   }
 
-  async findOne(id: number): Promise<Campaign | null> {
-    return this.campaignRepository.findOneBy({ id });
+  async findOne(id: number): Promise<Campaign> {
+    const res = await this.campaignRepository.findOneBy({ id });
+    if (res !== null) {
+      return res;
+    } else {
+      throw new NotFoundException(`Campaign with ID ${id} not found`);
+    }
   }
 
-  async remove(id: number): Promise<void> {
-    await this.campaignRepository.delete(id);
-  }
-
-  async update(campaign: Partial<Campaign>): Promise<Campaign> {
-    const campaignRow = await this.campaignRepository.findOneBy({ id: campaign.id });
+  async update(id: number, campaign: UpdateCampaignDto): Promise<Campaign> {
+    const campaignRow = await this.campaignRepository.findOneBy({ id: id });
     if (!campaignRow) {
-      throw new NotFoundException(`Campaign with ID ${campaign.id} not found`);
+      throw new NotFoundException(`Campaign with ID ${id} not found`);
     }
 
     return this.campaignRepository.save({ ...campaignRow, ...campaign });
