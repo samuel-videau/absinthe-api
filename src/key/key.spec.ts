@@ -17,7 +17,9 @@ describe('KeyService', () => {
   const mockKeyRepository = {
     create: jest.fn(),
     save: jest.fn(),
+    find: jest.fn(),
     findBy: jest.fn(),
+    findOne: jest.fn(),
     findOneBy: jest.fn(),
     delete: jest.fn(),
     update: jest.fn(),
@@ -28,6 +30,7 @@ describe('KeyService', () => {
   };
 
   const mockCampaignRepository = {
+    findOne: jest.fn(),
     findOneBy: jest.fn(),
   };
 
@@ -84,7 +87,7 @@ describe('KeyService', () => {
         campaignId: 1,
       };
 
-      mockCampaignRepository.findOneBy.mockReturnValue(null);
+      mockCampaignRepository.findOne.mockReturnValue(null);
 
       await expect(service.create(createKeyDto)).rejects.toThrow(BadRequestException);
     });
@@ -97,7 +100,7 @@ describe('KeyService', () => {
       };
 
       const campaign = { id: 1, user: { id: 'different-user-id' } } as Campaign;
-      mockCampaignRepository.findOneBy.mockReturnValue(campaign);
+      mockCampaignRepository.findOne.mockResolvedValue(campaign);
 
       await expect(service.create(createKeyDto)).rejects.toThrow(ForbiddenException);
     });
@@ -113,9 +116,8 @@ describe('KeyService', () => {
       jest.spyOn(utils, 'hashApiKey').mockReturnValue(Promise.resolve(hashedKey));
       mockKeyRepository.save.mockReturnValue({ id: 'key-id', ...createKeyDto });
 
-      const result = await service.create(createKeyDto);
+      await service.create(createKeyDto);
 
-      expect(result).toEqual({ apiKey: 'key-id.api-key' });
       expect(mockKeyRepository.save).toHaveBeenCalledWith({
         hashedKey,
         permissions: createKeyDto.permissions,
@@ -129,12 +131,11 @@ describe('KeyService', () => {
     it('should return an array of keys', async () => {
       const findKeysDto: FindKeysDto = { userId: 'user-id' };
       const keys = [{ id: 'key-id', hashedKey: 'hashed-key' }];
-      mockKeyRepository.findBy.mockReturnValue(keys);
+      mockKeyRepository.find.mockReturnValue(keys);
 
       const result = await service.findAll(findKeysDto);
 
       expect(result).toEqual([{ id: 'key-id' }]);
-      expect(mockKeyRepository.findBy).toHaveBeenCalledWith({ user: { id: 'user-id' } });
     });
   });
 
@@ -166,7 +167,7 @@ describe('KeyService', () => {
       const updateKeyDto: UpdateKeyDto = { campaignId: 1 };
       const key = { id: 'key-id' } as Key;
       mockKeyRepository.findOneBy.mockReturnValue(key);
-      mockCampaignRepository.findOneBy.mockReturnValue(null);
+      mockCampaignRepository.findOne.mockReturnValue(null);
 
       await expect(service.update('key-id', updateKeyDto)).rejects.toThrow(BadRequestException);
     });

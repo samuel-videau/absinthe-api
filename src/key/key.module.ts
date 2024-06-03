@@ -5,10 +5,9 @@ import { KeyController } from './key.controller';
 import { KeyService } from './key.service';
 import { Key } from './entities/key.entity';
 import { Campaign } from '../campaign/entities/campaign.entity';
-import { User } from '../user/entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Campaign, Key])],
+  imports: [TypeOrmModule.forFeature([Campaign, Key])],
   controllers: [KeyController],
   providers: [KeyService],
 })
